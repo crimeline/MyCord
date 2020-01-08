@@ -55,7 +55,14 @@ public class WriteLogToFile {
      * @return
      */
     private long getLength() {
-        return LOG_FILE_MAX_LENGTH;
+        int size = RDConfig.getInstance().getMaxsize();
+        if(size <= 0){
+            return LOG_FILE_MAX_LENGTH;
+        }
+        if(size < 512*KB){
+            size = 512*KB;
+        }
+        return size;
     }
 
     /**
@@ -160,7 +167,7 @@ public class WriteLogToFile {
     /**
      * 复制文件
      */
-    public static boolean copyFile(File src, File des) {
+    private static boolean copyFile(File src, File des) {
         if (!src.exists()) {
             Log.e("cppyFile", "file not exist:" + src.getAbsolutePath());
             return false;

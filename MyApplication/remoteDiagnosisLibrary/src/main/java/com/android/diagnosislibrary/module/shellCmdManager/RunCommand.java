@@ -1,6 +1,6 @@
 package com.android.diagnosislibrary.module.shellCmdManager;
 
-import com.android.diagnosislibrary.module.websocket.WebMsgListener;
+import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -18,7 +18,7 @@ public class RunCommand extends Thread {
     private String mCommand = null;
     private String mResult = null;
     private long mTimeOut = 30; //默认30秒超时
-    private WebMsgListener.CommandCallBack mCallBack = null;
+    private DiagnosisManagement.CommandCallBack mCallBack = null;
     private Process process;
     private boolean run = true;
 
@@ -47,7 +47,7 @@ public class RunCommand extends Thread {
         }
     }
 
-    public void setCallBack(WebMsgListener.CommandCallBack callBack) {
+    public void setCallBack(DiagnosisManagement.CommandCallBack callBack) {
         mCallBack = callBack;
     }
 

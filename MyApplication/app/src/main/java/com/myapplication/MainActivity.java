@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.android.diagnosislibrary.DiagnosisManagement;
-import com.android.diagnosislibrary.utils.Logger.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,10 +14,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String tag = DiagnosisManagement.getInstance(this).getTAG();
-        Logger.d(TAG, "onCreate: tag --> " + tag);
-//        DiagnosisManagement.getInstance(this).cmdrunning();
-        DiagnosisManagement.getInstance(this).start();
-        Logger.d(TAG, "onCreate: tag --> " + tag);
+        String websocketUrl = "wss://iepg-sy.vosnewland.com/ums";
+        String uploadLogUrl = "http://shijihulian.in.3322.org:13847/ynm";
+        DiagnosisManagement.getInstance().init(this,null, websocketUrl, uploadLogUrl, 5000, 30, null);
     }
 }

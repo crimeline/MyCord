@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.shellCmdManager.RunCommand;
-import com.android.diagnosislibrary.module.websocket.WebMsgListener;
+import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -70,7 +70,7 @@ public class LogCollectionManager {
         String command = "logcat " + filter;
         Logger.d(TAG, "writLogToFile : " + command);
         RunCommand runCommand = new RunCommand(command, 0);
-        runCommand.setCallBack(new WebMsgListener.CommandCallBack() {
+        runCommand.setCallBack(new DiagnosisManagement.CommandCallBack() {
             @Override
             public void sendResult(String line) {
                 WriteLogToFile.getInstance(mContext).writeLog(line + '\n');
@@ -98,7 +98,7 @@ public class LogCollectionManager {
         if (mRunCommand == null) {
             return;
         }
-        WriteLogToFile.getInstance(mContext).pauseWriteLog();
+        pauseLog();
         stopRunningLogCmd();
     }
 

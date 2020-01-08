@@ -21,7 +21,7 @@ public class RDConfig {
         return mRDConfig;
     }
 
-    public void init(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
+    public void setConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
         setFilter(filter);
         setUrl(websocketUrl);
         setLogUploadUrl(uploadLogUrl);

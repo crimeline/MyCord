@@ -6,6 +6,7 @@ import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.utils.CommonUtil;
 import com.android.diagnosislibrary.utils.DevUtils;
@@ -123,7 +124,7 @@ public class WebSocketUtil {
                     @Override
                     public void onMessage(String msg) {
                         Logger.d(TAG, "onMessage msg: " + msg);
-                        WebMsgListener.getInstance().onMessageReceived(mWebSocketClient, msg);
+                        DiagnosisManagement.getInstance().onMessageReceived(mWebSocketClient, msg);
                     }
 
                     @Override

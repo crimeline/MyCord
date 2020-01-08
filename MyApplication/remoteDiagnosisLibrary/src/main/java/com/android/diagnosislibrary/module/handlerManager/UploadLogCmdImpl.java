@@ -4,10 +4,10 @@ import android.content.Context;
 
 import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
 import com.android.diagnosislibrary.module.logCollectionManager.LogcatStroreManager;
-import com.android.diagnosislibrary.module.websocket.WebMsgListener;
+import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 
-public class UploadLogCmdImpl implements WebMsgListener.ICmdHandler {
+public class UploadLogCmdImpl implements DiagnosisManagement.ICmdHandler {
     private static final String TAG = "UploadLogCmdImpl";
     private static UploadLogCmdImpl mUploadLogCmdImpl = null;
     private static Context mContext = null;
@@ -22,7 +22,7 @@ public class UploadLogCmdImpl implements WebMsgListener.ICmdHandler {
     public static synchronized UploadLogCmdImpl getInstance() {
         if (mUploadLogCmdImpl == null) {
             mUploadLogCmdImpl = new UploadLogCmdImpl();
-            WebMsgListener.getInstance().addCmd(mUploadLogCmdImpl);
+            DiagnosisManagement.getInstance().addCmd(mUploadLogCmdImpl);
         }
 
         return mUploadLogCmdImpl;

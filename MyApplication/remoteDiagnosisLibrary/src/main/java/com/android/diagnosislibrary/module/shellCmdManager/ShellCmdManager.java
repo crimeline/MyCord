@@ -3,7 +3,7 @@ package com.android.diagnosislibrary.module.shellCmdManager;
 import android.support.annotation.NonNull;
 
 import com.android.diagnosislibrary.config.RDConfig;
-import com.android.diagnosislibrary.module.websocket.WebMsgListener;
+import com.android.diagnosislibrary.DiagnosisManagement;
 
 public class ShellCmdManager {
     private static ShellCmdManager mShellCmdManager = null;
@@ -41,7 +41,7 @@ public class ShellCmdManager {
     private RunCommand handleShellCmd(@NonNull final String id, String command) {
         stopRunningShellCmd();
         RunCommand runCommand = new RunCommand(command, RDConfig.getInstance().getTimeout());
-        runCommand.setCallBack(WebMsgListener.getInstance().getCommandCallBack(id));
+        runCommand.setCallBack(DiagnosisManagement.getInstance().getCommandCallBack(id));
         runCommand.start();
         return runCommand;
     }

@@ -1,10 +1,10 @@
 package com.android.diagnosislibrary.module.handlerManager;
 
 import com.android.diagnosislibrary.module.shellCmdManager.ShellCmdManager;
-import com.android.diagnosislibrary.module.websocket.WebMsgListener;
+import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 
-public class LogcatStartCmdImpl implements WebMsgListener.ICmdHandler {
+public class LogcatStartCmdImpl implements DiagnosisManagement.ICmdHandler {
     private static LogcatStartCmdImpl mLogcatStartCmdImpl = null;
     private static final String TAG = "LogcatStartCmdImpl";
 
@@ -17,7 +17,7 @@ public class LogcatStartCmdImpl implements WebMsgListener.ICmdHandler {
     public static synchronized LogcatStartCmdImpl getInstance() {
         if (mLogcatStartCmdImpl == null) {
             mLogcatStartCmdImpl = new LogcatStartCmdImpl();
-            WebMsgListener.getInstance().addCmd(mLogcatStartCmdImpl);
+            DiagnosisManagement.getInstance().addCmd(mLogcatStartCmdImpl);
         }
 
         return mLogcatStartCmdImpl;

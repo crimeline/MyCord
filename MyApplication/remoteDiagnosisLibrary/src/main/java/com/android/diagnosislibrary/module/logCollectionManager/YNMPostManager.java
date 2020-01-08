@@ -115,13 +115,5 @@ public class YNMPostManager {
             }
         });
     }
-
-    /**
-     * 日志上报
-     */
-    public static void postLogInfo(@NonNull LogInfo info, File log) {
-        postLogInfo(info, log, null);
-    }
-
 }
 
