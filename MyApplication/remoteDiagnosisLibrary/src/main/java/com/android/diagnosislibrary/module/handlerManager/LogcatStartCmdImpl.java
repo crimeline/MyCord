@@ -1,5 +1,6 @@
 package com.android.diagnosislibrary.module.handlerManager;
 
+import com.android.diagnosislibrary.module.shellCmdManager.ShellCmdManager;
 import com.android.diagnosislibrary.module.websocket.WebMsgListener;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 

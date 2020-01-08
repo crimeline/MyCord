@@ -3,7 +3,7 @@ package com.android.diagnosislibrary.module.logCollectionManager;
 import android.content.Context;
 
 import com.android.diagnosislibrary.config.RDConfig;
-import com.android.diagnosislibrary.module.handlerManager.RunCommand;
+import com.android.diagnosislibrary.module.shellCmdManager.RunCommand;
 import com.android.diagnosislibrary.module.websocket.WebMsgListener;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
@@ -30,7 +30,7 @@ public class LogCollectionManager {
         return mLogCollectionManager;
     }
 
-    public void stopRunningShellCmd() {
+    private void stopRunningLogCmd() {
         if (mRunCommand != null) {
             try {
                 Thread.sleep(500);
@@ -48,7 +48,7 @@ public class LogCollectionManager {
      * @param filter
      */
     public void setLogFilter(String filter) {
-        stopRunningShellCmd();
+        stopRunningLogCmd();
         writLogToFile(filter);
     }
 
@@ -63,6 +63,9 @@ public class LogCollectionManager {
     private void writLogToFile(String filter) {
         if (filter.equals(oldFilter) || mRunCommand != null) {
             return;
+        }
+        if (filter.contains("grep") && !filter.contains("line-buffered")) {
+            filter = filter.replace("grep", "grep --line-buffered");
         }
         String command = "logcat " + filter;
         Logger.d(TAG, "writLogToFile : " + command);
@@ -84,16 +87,31 @@ public class LogCollectionManager {
         writLogToFile(filter);
     }
 
-    public void stopLog() {
+    public void pauseLog() {
+        if (mRunCommand == null) {
+            return;
+        }
         WriteLogToFile.getInstance(mContext).pauseWriteLog();
+    }
+
+    public void stopLog() {
+        if (mRunCommand == null) {
+            return;
+        }
+        WriteLogToFile.getInstance(mContext).pauseWriteLog();
+        stopRunningLogCmd();
     }
 
     /**
      * 上传日志
      */
-    public void switchLogfile() {
+    public boolean switchLogfile() {
         Logger.d(TAG, "switchLogfile ...");
+        if (mRunCommand == null) {
+            return false;
+        }
         WriteLogToFile.getInstance(mContext).switchLogfile();
+        return true;
     }
 
 }

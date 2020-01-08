@@ -10,6 +10,7 @@ import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.websocket.LogInfo;
 import com.android.diagnosislibrary.utils.DevUtils;
 import com.android.diagnosislibrary.utils.Logger.Logger;
+import com.android.diagnosislibrary.utils.StringUtils;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -26,16 +27,18 @@ public class LogcatStroreManager {
     private static HandlerThread cmdThread = null;
     private static Handler cmdHandler = null;
     private static final int POST_LOG_ONECE = 1;
-    private static final int POST_LOG_SECOND = 2;
+    private static final int POST_LOG_NEXT = 2;
+    private static final int POST_LOG_END = 3;
+    private static final int UPLOAD_LOG_DEFAULT = 1;
     private static final String LOG_FILE_NAME_N = "RD_debug_%d.log";
 
-    private LogcatStroreManager(Context ctx){
+    private LogcatStroreManager(Context ctx) {
         this.mContext = ctx;
     }
 
     public static LogcatStroreManager getInstance(Context ctx) {
         if (instance == null) {
-            if(ctx == null){
+            if (ctx == null) {
                 return null;
             }
             instance = new LogcatStroreManager(ctx);
@@ -51,16 +54,27 @@ public class LogcatStroreManager {
         cmdHandler = new Handler(cmdThread.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                String filename = String.format(LOG_FILE_NAME_N, logCount);
-                String filePath = mContext.getFilesDir()+"/"+filename;
-                Logger.d(TAG , "upload log filename :" + filePath);
-                logCount ++;
+                String filename = null;
+                String filePath = null;
                 switch (msg.what) {
                     case POST_LOG_ONECE:
-                        postlog(instance,filePath);
+                        //最新的日志
+                        filename = String.format(LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
+                        filePath = mContext.getFilesDir() + "/" + filename;
+                        Logger.d(TAG, "upload log filename :" + filePath);
+                        postlog(instance, filePath);
                         break;
-                    case POST_LOG_SECOND:
-                        postlog(null,filePath);
+                    case POST_LOG_NEXT:
+                        filename = String.format(LOG_FILE_NAME_N, logCount);
+                        filePath = mContext.getFilesDir() + "/" + filename;
+                        Logger.d(TAG, "upload log filename :" + filePath);
+                        postlog(instance, filePath);
+                        break;
+                    case POST_LOG_END:
+                        filename = String.format(LOG_FILE_NAME_N, logCount);
+                        filePath = mContext.getFilesDir() + "/" + filename;
+                        Logger.d(TAG, "upload log filename :" + filePath);
+                        postlog(null, filePath);
                         break;
                 }
             }
@@ -68,31 +82,98 @@ public class LogcatStroreManager {
     }
 
     private int logCount = 0;
+    private String uploadTactics = null;
+
     public void postLogInfo() {
         Logger.d(TAG, "开始上传文件");
         logCount = 0;
         cmdHandler.sendEmptyMessageDelayed(POST_LOG_ONECE, 5 * 1000);
     }
 
-    public void postlogfileAgain() {
-        if(logCount >= RDConfig.mMaxCount+1){
-            cmdHandler.sendEmptyMessageDelayed(POST_LOG_SECOND, 5 * 1000);
-        }else{
-            cmdHandler.sendEmptyMessageDelayed(POST_LOG_ONECE, 5 * 1000);
-        }
+    /**
+     * 根据传参设置上传文件策略
+     *
+     * @param para
+     */
+    private void setUploadTactics(String para) {
+        uploadTactics = para;
     }
 
-    private void postlog(LogcatStroreManager listener,String filePath) {
+    private int getUploadTactics() {
+        if (StringUtils.isNullOrEmpty(uploadTactics)) {
+            return UPLOAD_LOG_DEFAULT;
+        }
+        int tactics = UPLOAD_LOG_DEFAULT;
+        switch (uploadTactics) {
+            case "tiem":
+                break;
+            default:
+                break;
+        }
+        return tactics;
+    }
+
+    /**
+     * 获取保存文件
+     *
+     * @return
+     */
+    private int getUploadFile() {
+        File file = null;
+        File uploadFile = null;
+        try {
+            for (int i = 0; i <= RDConfig.mMaxCount; i++) {
+                String filename = String.format(LOG_FILE_NAME_N, i);
+                file = new File(mContext.getFilesDir(), filename);
+                long time = file.lastModified();
+                if (time == 0) {
+                    continue;
+                }
+
+                if (uploadFile == null) {
+                    uploadFile = file;
+                    logCount = i;
+                    continue;
+                }
+
+                if (time > uploadFile.lastModified()) {
+                    uploadFile = file;
+                    logCount = i;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "getSaveFileName: error " + e.toString());
+            logCount = 0;
+            return logCount;
+        }
+
+        return logCount;
+    }
+
+    public void postlogfileAgain() {
+        if (getUploadTactics() == UPLOAD_LOG_DEFAULT) {
+            getUploadFile();
+            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
+        }
+//        if(logCount >= RDConfig.mMaxCount){
+//            logCount ++;
+//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_NEXT, 5 * 1000);
+//        }else{
+//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
+//        }
+    }
+
+    private void postlog(LogcatStroreManager listener, String filePath) {
         chmodFile(filePath);
         File postfile = new File(filePath);
-        Logger.d(TAG, "postlog 上传log文件开始 ==== "+ filePath +" : " + postfile.length());
+        Logger.d(TAG, "postlog 上传log文件开始 ==== " + filePath + " : " + postfile.length());
         if (postfile != null && postfile.exists() && postfile.isFile() && postfile.length() > 0) {
             LogInfo info = new LogInfo();
             info.setSerialNumber(DevUtils.getSn(mContext));
             info.setAppkey(DevUtils.getAppkey(mContext));
             YNMPostManager.postLogInfo(info, postfile, listener);
-        }else{
-            if(listener != null){
+        } else {
+            if (listener != null) {
                 postlogfileAgain();
             }
         }

@@ -41,7 +41,9 @@ public class DiagnosisManagement {
 
     public void start() {
         Logger.setLogLevel(Logger.LOG_LEVEL_DEBUG);
-        RDConfig.getInstance().init(null, "wss://iepg-sy.vosnewland.com/ums", 5000, 30, null);
+        String websocketUrl = "wss://iepg-sy.vosnewland.com/ums";
+        String uploadLogUrl = "http://shijihulian.in.3322.org:13847/ynm";
+        RDConfig.getInstance().init(null, websocketUrl, uploadLogUrl, 5000, 30, null);
         WebMsgListener.getInstance().init(mContext);
         LogcatStroreManager.getInstance(mContext).init();
         LogCollectionManager.getInstance(mContext).startLog();

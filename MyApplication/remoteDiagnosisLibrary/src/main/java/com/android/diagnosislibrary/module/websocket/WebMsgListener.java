@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.android.diagnosislibrary.module.handlerManager.LogcatEndCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.LogcatStartCmdImpl;
-import com.android.diagnosislibrary.module.handlerManager.ShellCmdManager;
+import com.android.diagnosislibrary.module.shellCmdManager.ShellCmdManager;
 import com.android.diagnosislibrary.module.handlerManager.UploadLogCmdImpl;
 import com.android.diagnosislibrary.utils.DevUtils;
 import com.android.diagnosislibrary.utils.JsonUtil;

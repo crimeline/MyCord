@@ -39,8 +39,10 @@ public class UploadLogCmdImpl implements WebMsgListener.ICmdHandler {
         if (mContext == null) {
             Logger.e(TAG, "cmdHandler error: don't init");
         }
-        LogCollectionManager.getInstance(mContext).switchLogfile();
-        LogcatStroreManager.getInstance(mContext).postLogInfo();
+        //没有跑日志收集模块不让上传日志
+        if (LogCollectionManager.getInstance(mContext).switchLogfile()) {
+            LogcatStroreManager.getInstance(mContext).postLogInfo();
+        }
         return;
     }
 }

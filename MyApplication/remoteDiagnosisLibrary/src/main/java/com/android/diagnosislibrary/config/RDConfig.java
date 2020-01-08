@@ -5,10 +5,11 @@ public class RDConfig {
     private static final String TAG = "RDConfig";
     private static RDConfig mRDConfig = null;
     private String filter;
-    private String url;
+    private String websocketUrl;
     private int maxsize;
     private int timeout;
     private String devId;
+    private String uploadLogUrl;
 
     private RDConfig() {
     }
@@ -20,9 +21,10 @@ public class RDConfig {
         return mRDConfig;
     }
 
-    public void init(String filter, String url, int maxsize, int timeout, String devId) {
+    public void init(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
         setFilter(filter);
-        setUrl(url);
+        setUrl(websocketUrl);
+        setLogUploadUrl(uploadLogUrl);
         setMaxsize(maxsize);
         setTimeout(timeout);
         setDevId(devId);
@@ -37,15 +39,19 @@ public class RDConfig {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.websocketUrl = url;
     }
 
     public String getUrl() {
-        return this.url;
+        return this.websocketUrl;
     }
 
-    public String getNMUrl() {
-        return "http://shijihulian.in.3322.org:13847/ynm";
+    public String setLogUploadUrl(String url) {
+        return this.uploadLogUrl = url;
+    }
+
+    public String getLogUploadUrl() {
+        return this.uploadLogUrl;
     }
 
     public void setMaxsize(int maxsize) {

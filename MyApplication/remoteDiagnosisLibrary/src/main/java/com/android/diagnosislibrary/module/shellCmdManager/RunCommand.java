@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.module.handlerManager;
+package com.android.diagnosislibrary.module.shellCmdManager;
 
 import com.android.diagnosislibrary.module.websocket.WebMsgListener;
 import com.android.diagnosislibrary.utils.Logger.Logger;
@@ -24,11 +24,11 @@ public class RunCommand extends Thread {
 
     public RunCommand(String command, long timeout) {
         mCommand = command;
-        if(timeout == 0){
-            mTimeOut = 12*30*24*60*60;//一年
-        }else if(timeout > 0){
+        if (timeout == 0) {
+            mTimeOut = 12 * 30 * 24 * 60 * 60;//一年
+        } else if (timeout > 0) {
             mTimeOut = timeout;
-        }else{
+        } else {
             mTimeOut = 30;
         }
 

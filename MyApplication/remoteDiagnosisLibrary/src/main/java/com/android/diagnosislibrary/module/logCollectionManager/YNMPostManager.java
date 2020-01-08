@@ -34,7 +34,7 @@ public class YNMPostManager {
     private static final String PARAM_LOG = "log";
 
     private static String buildUrl(String method) {
-        String url = Uri.parse(RDConfig.getInstance().getNMUrl()).buildUpon()
+        String url = Uri.parse(RDConfig.getInstance().getLogUploadUrl()).buildUpon()
                 .appendPath(method)
                 .appendQueryParameter("time", Long.toString(System.currentTimeMillis()))
                 .build().toString();

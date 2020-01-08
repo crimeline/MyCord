@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.module.handlerManager;
+package com.android.diagnosislibrary.module.shellCmdManager;
 
 import android.support.annotation.NonNull;
 
@@ -9,18 +9,18 @@ public class ShellCmdManager {
     private static ShellCmdManager mShellCmdManager = null;
     private RunCommand mRunCommand = null;
 
-    private ShellCmdManager (){
+    private ShellCmdManager() {
     }
 
-    public static ShellCmdManager getInstance(){
-        if(mShellCmdManager == null){
+    public static ShellCmdManager getInstance() {
+        if (mShellCmdManager == null) {
             mShellCmdManager = new ShellCmdManager();
         }
         return mShellCmdManager;
     }
 
-    public void runShellCmd(String id, String command){
-        mRunCommand = handleShellCmd(id,command);
+    public void runShellCmd(String id, String command) {
+        mRunCommand = handleShellCmd(id, command);
     }
 
     public void stopRunningShellCmd() {
