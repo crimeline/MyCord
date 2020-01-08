@@ -1,6 +1,7 @@
 package com.android.diagnosislibrary.config;
 
 public class RDConfig {
+    public static final int mMaxCount = 3;
     private static final String TAG = "RDConfig";
     private static RDConfig mRDConfig = null;
     private String filter;
@@ -41,6 +42,10 @@ public class RDConfig {
 
     public String getUrl() {
         return this.url;
+    }
+
+    public String getNMUrl() {
+        return "http://shijihulian.in.3322.org:13847/ynm";
     }
 
     public void setMaxsize(int maxsize) {

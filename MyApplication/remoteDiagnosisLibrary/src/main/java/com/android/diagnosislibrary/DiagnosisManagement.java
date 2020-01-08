@@ -3,6 +3,9 @@ package com.android.diagnosislibrary;
 import android.content.Context;
 
 import com.android.diagnosislibrary.config.RDConfig;
+import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
+import com.android.diagnosislibrary.module.logCollectionManager.LogcatStroreManager;
+import com.android.diagnosislibrary.module.websocket.WebMsgListener;
 import com.android.diagnosislibrary.module.websocket.WebSocketUtil;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 
@@ -39,6 +42,9 @@ public class DiagnosisManagement {
     public void start() {
         Logger.setLogLevel(Logger.LOG_LEVEL_DEBUG);
         RDConfig.getInstance().init(null, "wss://iepg-sy.vosnewland.com/ums", 5000, 30, null);
+        WebMsgListener.getInstance().init(mContext);
+        LogcatStroreManager.getInstance(mContext).init();
+        LogCollectionManager.getInstance(mContext).startLog();
         WebSocketUtil.getInstance(mContext).startReconnect();
     }
 

@@ -8,7 +8,7 @@ import com.android.diagnosislibrary.config.RDConfig;
 public class DevUtils {
     public static String getSn(Context ctx) {
         String sn = RDConfig.getInstance().getDevId();
-        if(!StringUtils.isNullOrEmpty(sn)){
+        if (!StringUtils.isNullOrEmpty(sn)) {
             return sn;
         }
         sn = android.os.Build.SERIAL;

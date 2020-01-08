@@ -19,6 +19,9 @@ public class PackageUtils {
 
 
     private static PackageInfo getPackageInfo(Context context) {
+        if(context == null){
+            return null;
+        }
         try {
             return context.getPackageManager().getPackageInfo(getName(context), 0);
         } catch (PackageManager.NameNotFoundException e) {
@@ -30,7 +33,7 @@ public class PackageUtils {
      * 获取应用包名
      */
     public static String getName(Context ctx) {
-        if(ctx == null){
+        if (ctx == null) {
             return null;
         }
         return ctx.getPackageName();

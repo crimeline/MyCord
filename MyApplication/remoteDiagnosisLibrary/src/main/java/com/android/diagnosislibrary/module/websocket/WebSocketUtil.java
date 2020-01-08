@@ -123,7 +123,7 @@ public class WebSocketUtil {
                     @Override
                     public void onMessage(String msg) {
                         Logger.d(TAG, "onMessage msg: " + msg);
-                        WebMsgListener.getInstance(mContext).onMessageReceived(mWebSocketClient, msg);
+                        WebMsgListener.getInstance().onMessageReceived(mWebSocketClient, msg);
                     }
 
                     @Override
@@ -229,18 +229,4 @@ public class WebSocketUtil {
         mHandler.removeCallbacks(pongRunnable);
         mHandler.postDelayed(pongRunnable, RECONNECT_INTERVAL);
     }
-
-//    public void sendEasyResponse(int cmd, String param){
-//        WebMsgListener.getInstance().sendEasyResponse(cmd, param);
-//    }
-//
-//    public void sendGameMessage(String msg){
-//        WebMsgListener.getInstance().sendGameMessage(msg);
-//    }
-//
-//    public void sendEasyNotify(String instruction, String param, String jid){
-//        Logger.d(TAG, " sendEasyNotify instruction : "+instruction+" ;  param : "+param+"; id : "+jid);
-//
-//        WebMsgListener.getInstance().sendEasyNotify(instruction, param, jid);
-//    }
 }

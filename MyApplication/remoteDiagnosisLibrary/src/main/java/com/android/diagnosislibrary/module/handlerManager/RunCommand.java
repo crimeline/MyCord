@@ -1,5 +1,6 @@
-package com.android.diagnosislibrary.module.shellCmdManager;
+package com.android.diagnosislibrary.module.handlerManager;
 
+import com.android.diagnosislibrary.module.websocket.WebMsgListener;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -17,13 +18,20 @@ public class RunCommand extends Thread {
     private String mCommand = null;
     private String mResult = null;
     private long mTimeOut = 30; //默认30秒超时
-    private CommandCallBack mCallBack = null;
+    private WebMsgListener.CommandCallBack mCallBack = null;
     private Process process;
     private boolean run = true;
 
     public RunCommand(String command, long timeout) {
         mCommand = command;
-        mTimeOut = timeout;
+        if(timeout == 0){
+            mTimeOut = 12*30*24*60*60;//一年
+        }else if(timeout > 0){
+            mTimeOut = timeout;
+        }else{
+            mTimeOut = 30;
+        }
+
     }
 
     public void terminal() {
@@ -39,12 +47,8 @@ public class RunCommand extends Thread {
         }
     }
 
-    public void setCallBack(CommandCallBack callBack) {
+    public void setCallBack(WebMsgListener.CommandCallBack callBack) {
         mCallBack = callBack;
-    }
-
-    public interface CommandCallBack {
-        void sendResult(String line);
     }
 
     public String getResult() {
@@ -77,6 +81,7 @@ public class RunCommand extends Thread {
 
             String line = null;
 
+            Logger.i(TAG, "start read result ");
             while (run && (line = stdout.readLine()) != null) {
 //				Thread.sleep(DELAY_TIME);
                 if (!line.trim().isEmpty()) {
@@ -105,11 +110,13 @@ public class RunCommand extends Thread {
 
                     long endTime = System.currentTimeMillis();
                     if ((endTime - startTime) > mTimeOut * MS) {
+                        Logger.i(TAG, "result kill return");
                         process.destroy();
                         break;
                     }
                 }
             }
+            Logger.i(TAG, "end read result ");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
