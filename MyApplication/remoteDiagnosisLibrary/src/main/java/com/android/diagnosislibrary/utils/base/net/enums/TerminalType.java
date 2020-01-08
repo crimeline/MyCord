@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.utils.base.framework.enums;
+package com.android.diagnosislibrary.utils.base.net.enums;
 
 public enum TerminalType {
     UNKNOWN(-1), All(0), TV(1), PC(2), PHONE(3), PAD(4) ;

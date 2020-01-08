@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.utils.base.framework.model;
+package com.android.diagnosislibrary.utils.base.net.model;
 
 import java.io.File;
 

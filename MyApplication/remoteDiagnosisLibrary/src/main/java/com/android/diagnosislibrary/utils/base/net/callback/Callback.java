@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.utils.base.framework.callback;
+package com.android.diagnosislibrary.utils.base.net.callback;
 
 /**
  * Created by Administrator on 2017/6/15.

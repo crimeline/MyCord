@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.utils.base.framework.enums;
+package com.android.diagnosislibrary.utils.base.net.enums;
 
 
 public enum ServiceType {

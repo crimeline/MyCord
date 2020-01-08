@@ -1,4 +1,4 @@
-package com.android.diagnosislibrary.utils.base.framework;
+package com.android.diagnosislibrary.utils.base.net;
 
 import java.io.Serializable;
 

@@ -8,15 +8,15 @@ import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.websocket.LogInfo;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.UtilCallback;
-import com.android.diagnosislibrary.utils.base.framework.model.FileInput;
-import com.android.diagnosislibrary.utils.base.framework.usecase.HttpFileRequest;
+import com.android.diagnosislibrary.utils.base.net.model.FileInput;
+import com.android.diagnosislibrary.utils.base.net.usecase.HttpFileRequest;
 import com.android.diagnosislibrary.utils.base.usecase.UseCaseDefaultCallback;
 import com.android.diagnosislibrary.utils.base.usecase.UseCaseHandler;
 
 import java.io.File;
 import java.util.Map;
 
-import static com.android.diagnosislibrary.utils.base.framework.enums.HttpMethod.POST;
+import static com.android.diagnosislibrary.utils.base.net.enums.HttpMethod.POST;
 
 /**
  * Created by Administrator on 2017/3/31.

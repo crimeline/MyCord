@@ -1,8 +1,8 @@
-package com.android.diagnosislibrary.utils.base.framework.usecase;
+package com.android.diagnosislibrary.utils.base.net.usecase;
 
 import com.android.diagnosislibrary.utils.Logger.Logger;
-import com.android.diagnosislibrary.utils.base.framework.enums.HttpMethod;
-import com.android.diagnosislibrary.utils.base.framework.model.FileInput;
+import com.android.diagnosislibrary.utils.base.net.enums.HttpMethod;
+import com.android.diagnosislibrary.utils.base.net.model.FileInput;
 import com.android.diagnosislibrary.utils.base.usecase.UseCase;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.GetBuilder;
