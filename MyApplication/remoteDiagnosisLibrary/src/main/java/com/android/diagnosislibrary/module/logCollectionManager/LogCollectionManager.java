@@ -47,9 +47,9 @@ public class LogCollectionManager {
      *
      * @param filter
      */
-    public void setLogFilter(String filter) {
+    public boolean setLogFilter(String filter) {
         stopRunningLogCmd();
-        writLogToFile(filter);
+        return writLogToFile(filter);
     }
 
     private String getFilter() {
@@ -60,9 +60,9 @@ public class LogCollectionManager {
         return filter;
     }
 
-    private void writLogToFile(String filter) {
+    private boolean writLogToFile(String filter) {
         if (filter.equals(oldFilter) || mRunCommand != null) {
-            return;
+            return false;
         }
         if (filter.contains("grep") && !filter.contains("line-buffered")) {
             filter = filter.replace("grep", "grep --line-buffered");
@@ -79,6 +79,7 @@ public class LogCollectionManager {
         runCommand.start();
         oldFilter = filter;
         mRunCommand = runCommand;
+        return true;
     }
 
     public void startLog() {

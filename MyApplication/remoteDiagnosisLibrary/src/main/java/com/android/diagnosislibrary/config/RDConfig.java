@@ -1,5 +1,7 @@
 package com.android.diagnosislibrary.config;
 
+import com.android.diagnosislibrary.utils.StringUtils;
+
 public class RDConfig {
     public static final int mMaxCount = 3;
     private static final String TAG = "RDConfig";
@@ -35,6 +37,9 @@ public class RDConfig {
     }
 
     public String getFilter() {
+        if(StringUtils.isNullOrEmpty(filter)){
+            return " | grep -e \"VOS\" -e \"AndroidRuntime\" -e \"System.err\" -e \"WebSocketUtil\"";
+        }
         return this.filter;
     }
 

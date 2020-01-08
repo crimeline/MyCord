@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.handlerManager.LogcatEndCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.LogcatStartCmdImpl;
+import com.android.diagnosislibrary.module.handlerManager.SetLogFilterCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.UploadLogCmdImpl;
 import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
 import com.android.diagnosislibrary.module.logCollectionManager.LogcatStroreManager;
@@ -45,6 +46,7 @@ public class DiagnosisManagement {
         LogcatEndCmdImpl.getInstance().init();
         LogcatStartCmdImpl.getInstance().init();
         UploadLogCmdImpl.getInstance().init(mContext);
+        SetLogFilterCmdImpl.getInstance().init(mContext);
     }
 
     public static DiagnosisManagement getInstance() {
@@ -210,7 +212,7 @@ public class DiagnosisManagement {
 //            Logger.e(TAG, e.getMessage());
 //        }
 //    }
-    private void sendDiagnoseResponse(String line, String id) {
+    public void sendDiagnoseResponse(String line, String id) {
         try {
             MessageBody result = new MessageBody();
 
