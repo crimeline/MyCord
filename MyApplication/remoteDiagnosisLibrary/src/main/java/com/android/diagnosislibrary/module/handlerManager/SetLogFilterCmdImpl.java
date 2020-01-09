@@ -3,7 +3,6 @@ package com.android.diagnosislibrary.module.handlerManager;
 import android.content.Context;
 
 import com.android.diagnosislibrary.DiagnosisManagement;
-import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
@@ -51,11 +50,7 @@ public class SetLogFilterCmdImpl implements DiagnosisManagement.ICmdHandler {
             return;
         }
         Logger.d(TAG, "filter: " + filter);
-        if (LogCollectionManager.getInstance(mContext).setLogFilter(filter)) {
-            DiagnosisManagement.getInstance().sendDiagnoseResponse("set log filter successful !!!", id);
-        } else {
-            DiagnosisManagement.getInstance().sendDiagnoseResponse("set error: don't running log collection or The filter is the same as the old one!!!", id);
-            DiagnosisManagement.getInstance().sendDiagnoseResponse("old filter:" + RDConfig.getInstance().getFilter(), id);
-        }
+        String result = LogCollectionManager.getInstance(mContext).setLogFilter(filter);
+        DiagnosisManagement.getInstance().sendDiagnoseResponse(result, id);
     }
 }

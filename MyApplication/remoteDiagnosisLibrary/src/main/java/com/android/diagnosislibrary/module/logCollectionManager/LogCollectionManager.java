@@ -14,6 +14,7 @@ public class LogCollectionManager {
     private static LogCollectionManager mLogCollectionManager = null;
     private RunCommand mRunCommand = null;
     private String oldFilter = null;
+    private boolean isRunning = false;
 
     private LogCollectionManager(Context ctx) {
         this.mContext = ctx;
@@ -47,9 +48,16 @@ public class LogCollectionManager {
      *
      * @param filter
      */
-    public boolean setLogFilter(String filter) {
+    public String setLogFilter(String filter) {
+        if (filter.equals(oldFilter)) {
+            return "set error: The filter is the same as the old one!!!\n" + "old filter:" + RDConfig.getInstance().getFilter();
+        }
+        if (!isRunning) {
+            return "set error: don't running log collection !!!";
+        }
+        RDConfig.getInstance().setFilter(filter);
         stopRunningLogCmd();
-        return writLogToFile(filter);
+        return "set log filter successful !!!";
     }
 
     private String getFilter() {
@@ -60,10 +68,24 @@ public class LogCollectionManager {
         return filter;
     }
 
-    private boolean writLogToFile(String filter) {
-        if (filter.equals(oldFilter) || mRunCommand != null) {
-            return false;
+    private void reStart(){
+        if (isRunning) {
+            oldFilter = null;
+            writLogToFile(RDConfig.getInstance().getFilter());
         }
+        return;
+    }
+
+    private boolean writLogToFile(String filter) {
+        if (mRunCommand != null ) {
+            if(filter.equals(oldFilter)){
+                return false;
+            }
+            stopRunningLogCmd();
+        }
+
+        oldFilter = filter;
+        //解决grep命令导致收集日志不及时问题
         if (filter.contains("grep") && !filter.contains("line-buffered")) {
             filter = filter.replace("grep", "grep --line-buffered");
         }
@@ -74,31 +96,39 @@ public class LogCollectionManager {
             @Override
             public void sendResult(String line) {
                 WriteLogToFile.getInstance(mContext).writeLog(line + '\n');
+                if(line.contains(RunCommand.LOGCAT_END_INFO)) {
+                    Logger.d(TAG,"old log collection end");
+                    reStart();
+                }
             }
         });
         runCommand.start();
-        oldFilter = filter;
         mRunCommand = runCommand;
         return true;
     }
 
     public void startLog() {
+        if (isRunning) {
+            return;
+        }
+        isRunning = true;
         String filter = getFilter();
         WriteLogToFile.getInstance(mContext).openWriteLog();
         writLogToFile(filter);
     }
 
     public void pauseLog() {
-        if (mRunCommand == null) {
+        if (!isRunning) {
             return;
         }
         WriteLogToFile.getInstance(mContext).pauseWriteLog();
     }
 
     public void stopLog() {
-        if (mRunCommand == null) {
+        if (!isRunning) {
             return;
         }
+        isRunning = false;
         pauseLog();
         stopRunningLogCmd();
     }
@@ -108,7 +138,7 @@ public class LogCollectionManager {
      */
     public boolean switchLogfile() {
         Logger.d(TAG, "switchLogfile ...");
-        if (mRunCommand == null) {
+        if (!isRunning) {
             return false;
         }
         WriteLogToFile.getInstance(mContext).switchLogfile();

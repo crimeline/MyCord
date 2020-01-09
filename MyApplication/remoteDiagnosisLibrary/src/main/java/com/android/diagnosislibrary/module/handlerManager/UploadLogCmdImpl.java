@@ -3,7 +3,7 @@ package com.android.diagnosislibrary.module.handlerManager;
 import android.content.Context;
 
 import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
-import com.android.diagnosislibrary.module.logCollectionManager.LogcatStroreManager;
+import com.android.diagnosislibrary.module.logCollectionManager.UploadLogManager;
 import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 
@@ -41,7 +41,7 @@ public class UploadLogCmdImpl implements DiagnosisManagement.ICmdHandler {
         }
         //没有跑日志收集模块不让上传日志
         if (LogCollectionManager.getInstance(mContext).switchLogfile()) {
-            LogcatStroreManager.getInstance(mContext).postLogInfo();
+            UploadLogManager.getInstance(mContext).postLogInfo();
         }
         return;
     }

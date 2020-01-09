@@ -10,7 +10,7 @@ import com.android.diagnosislibrary.module.handlerManager.LogcatStartCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.SetLogFilterCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.UploadLogCmdImpl;
 import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
-import com.android.diagnosislibrary.module.logCollectionManager.LogcatStroreManager;
+import com.android.diagnosislibrary.module.logCollectionManager.UploadLogManager;
 import com.android.diagnosislibrary.module.shellCmdManager.ShellCmdManager;
 import com.android.diagnosislibrary.module.websocket.MessageBody;
 import com.android.diagnosislibrary.module.websocket.MsgConstant;
@@ -69,7 +69,7 @@ public class DiagnosisManagement {
         mContext = ctx;
         baseCmdHandleInit();
         setRDConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
-        LogcatStroreManager.getInstance(mContext).init();
+        UploadLogManager.getInstance(mContext).init();
         WebSocketUtil.getInstance(mContext).startReconnect();
     }
 
@@ -77,7 +77,7 @@ public class DiagnosisManagement {
         stopLog();
     }
 
-    Boolean setRDConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId){
+    public Boolean setRDConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId){
         RDConfig.getInstance().setConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
         return true;
     }

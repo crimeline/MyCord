@@ -92,7 +92,7 @@ public class YNMPostManager {
     /**
      * 日志上报
      */
-    public static void postLogInfo(@NonNull LogInfo info, File log, final LogcatStroreManager listener) {
+    public static void postLogInfo(@NonNull LogInfo info, File log, final UploadLogManager listener) {
         simpleUpload(buildDeviceLogUrl(), info.getParamsMap(), PARAM_LOG, log, new UtilCallback() {
             @Override
             public void onSuccess(String response) throws RemoteException {

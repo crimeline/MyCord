@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.android.diagnosislibrary.DiagnosisManagement;
+import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
         String websocketUrl = "wss://iepg-sy.vosnewland.com/ums";
         String uploadLogUrl = "http://shijihulian.in.3322.org:13847/ynm";
-        DiagnosisManagement.getInstance().init(this,null, websocketUrl, uploadLogUrl, 5000, 30, null);
+        DiagnosisManagement.getInstance().init(this,null, websocketUrl, uploadLogUrl, 5*1024*1024, 30, null);
+        LogCollectionManager.getInstance(this).startLog();
     }
 }

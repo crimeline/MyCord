@@ -15,6 +15,8 @@ public class RunCommand extends Thread {
     private static final int DELAY_TIME = 50;
     private static final int MS = 1000;
 
+    public static final String LOGCAT_END_INFO = "logcat cmd end running";
+
     private String mCommand = null;
     private String mResult = null;
     private long mTimeOut = 30; //默认30秒超时
@@ -110,7 +112,6 @@ public class RunCommand extends Thread {
 
                     long endTime = System.currentTimeMillis();
                     if ((endTime - startTime) > mTimeOut * MS) {
-                        Logger.i(TAG, "result kill return");
                         process.destroy();
                         break;
                     }
@@ -130,9 +131,12 @@ public class RunCommand extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if(cmd.contains("logcat")){
+                mCallBack.sendResult(LOGCAT_END_INFO);
+            }
         }
 
-        Logger.i(TAG, "retString=" + retString);
+//        Logger.i(TAG, "retString=" + retString);
         return retString;
     }
 }

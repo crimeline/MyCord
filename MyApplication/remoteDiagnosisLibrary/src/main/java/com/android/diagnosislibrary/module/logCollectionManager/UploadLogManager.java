@@ -19,9 +19,9 @@ import java.io.PrintWriter;
  * Created by Administrator on 2019/11/26.
  */
 
-public class LogcatStroreManager {
+public class UploadLogManager {
     private static String TAG = "VOS_LogcatStroreManager";
-    private static LogcatStroreManager instance;
+    private static UploadLogManager instance;
     private static Context mContext = null;
 
     private static HandlerThread cmdThread = null;
@@ -32,16 +32,16 @@ public class LogcatStroreManager {
     private static final int UPLOAD_LOG_DEFAULT = 1;
     private static final String LOG_FILE_NAME_N = "RD_debug_%d.log";
 
-    private LogcatStroreManager(Context ctx) {
+    private UploadLogManager(Context ctx) {
         this.mContext = ctx;
     }
 
-    public static LogcatStroreManager getInstance(Context ctx) {
+    public static UploadLogManager getInstance(Context ctx) {
         if (instance == null) {
             if (ctx == null) {
                 return null;
             }
-            instance = new LogcatStroreManager(ctx);
+            instance = new UploadLogManager(ctx);
         }
         return instance;
     }
@@ -163,7 +163,7 @@ public class LogcatStroreManager {
 //        }
     }
 
-    private void postlog(LogcatStroreManager listener, String filePath) {
+    private void postlog(UploadLogManager listener, String filePath) {
         chmodFile(filePath);
         File postfile = new File(filePath);
         Logger.d(TAG, "postlog 上传log文件开始 ==== " + filePath + " : " + postfile.length());
