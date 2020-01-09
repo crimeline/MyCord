@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.module.shellCmdManager.RunCommand;
-import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -31,16 +30,54 @@ public class LogCollectionManager {
         return mLogCollectionManager;
     }
 
-    private void stopRunningLogCmd() {
-        if (mRunCommand != null) {
-            try {
-                Thread.sleep(500);
-                mRunCommand.terminal();
-                mRunCommand = null;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    /**
+     * 开始收集日志
+     */
+    public void startLog() {
+        if (isRunning) {
+            return;
         }
+        isRunning = true;
+        String filter = getFilter();
+        WriteLogToFile.getInstance(mContext).openWriteLog();
+        writLogToFile(filter);
+    }
+
+    /**
+     * 暂停收集日志，这个接口会丢日志
+     */
+    private void pauseLog() {
+        if (!isRunning) {
+            return;
+        }
+        WriteLogToFile.getInstance(mContext).pauseWriteLog();
+    }
+
+    /**
+     * 停止日志收集
+     */
+    public void stopLog() {
+        if (!isRunning) {
+            return;
+        }
+        isRunning = false;
+        pauseLog();
+        stopRunningLogCmd();
+    }
+
+    /**
+     * 上传日志
+     */
+    public boolean uploadLogFile(){
+        Logger.d(TAG, "switchLogfile ...");
+        //没有跑日志收集模块不让上传日志
+        if (!isRunning) {
+            return false;
+        }
+        WriteLogToFile.getInstance(mContext).capyLogfile();
+        UploadLogManager.getInstance(mContext).postLogInfo();
+        return true;
+
     }
 
     /**
@@ -58,6 +95,18 @@ public class LogCollectionManager {
         RDConfig.getInstance().setFilter(filter);
         stopRunningLogCmd();
         return "set log filter successful !!!";
+    }
+
+    private void stopRunningLogCmd() {
+        if (mRunCommand != null) {
+            try {
+                Thread.sleep(500);
+                mRunCommand.terminal();
+                mRunCommand = null;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String getFilter() {
@@ -92,7 +141,7 @@ public class LogCollectionManager {
         String command = "logcat " + filter;
         Logger.d(TAG, "writLogToFile : " + command);
         RunCommand runCommand = new RunCommand(command, 0);
-        runCommand.setCallBack(new DiagnosisManagement.CommandCallBack() {
+        runCommand.setCallBack(new RunCommand.CommandCallBack() {
             @Override
             public void sendResult(String line) {
                 WriteLogToFile.getInstance(mContext).writeLog(line + '\n');
@@ -106,43 +155,4 @@ public class LogCollectionManager {
         mRunCommand = runCommand;
         return true;
     }
-
-    public void startLog() {
-        if (isRunning) {
-            return;
-        }
-        isRunning = true;
-        String filter = getFilter();
-        WriteLogToFile.getInstance(mContext).openWriteLog();
-        writLogToFile(filter);
-    }
-
-    public void pauseLog() {
-        if (!isRunning) {
-            return;
-        }
-        WriteLogToFile.getInstance(mContext).pauseWriteLog();
-    }
-
-    public void stopLog() {
-        if (!isRunning) {
-            return;
-        }
-        isRunning = false;
-        pauseLog();
-        stopRunningLogCmd();
-    }
-
-    /**
-     * 上传日志
-     */
-    public boolean switchLogfile() {
-        Logger.d(TAG, "switchLogfile ...");
-        if (!isRunning) {
-            return false;
-        }
-        WriteLogToFile.getInstance(mContext).switchLogfile();
-        return true;
-    }
-
 }

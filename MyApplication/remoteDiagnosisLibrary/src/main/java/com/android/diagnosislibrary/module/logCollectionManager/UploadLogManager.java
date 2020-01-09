@@ -30,7 +30,9 @@ public class UploadLogManager {
     private static final int POST_LOG_NEXT = 2;
     private static final int POST_LOG_END = 3;
     private static final int UPLOAD_LOG_DEFAULT = 1;
-    private static final String LOG_FILE_NAME_N = "RD_debug_%d.log";
+
+    private int logCount = 0;
+    private String uploadTactics = null;
 
     private UploadLogManager(Context ctx) {
         this.mContext = ctx;
@@ -59,19 +61,19 @@ public class UploadLogManager {
                 switch (msg.what) {
                     case POST_LOG_ONECE:
                         //最新的日志
-                        filename = String.format(LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
+                        filename = String.format(RDConfig.LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
                         filePath = mContext.getFilesDir() + "/" + filename;
                         Logger.d(TAG, "upload log filename :" + filePath);
                         postlog(instance, filePath);
                         break;
                     case POST_LOG_NEXT:
-                        filename = String.format(LOG_FILE_NAME_N, logCount);
+                        filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
                         filePath = mContext.getFilesDir() + "/" + filename;
                         Logger.d(TAG, "upload log filename :" + filePath);
                         postlog(instance, filePath);
                         break;
                     case POST_LOG_END:
-                        filename = String.format(LOG_FILE_NAME_N, logCount);
+                        filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
                         filePath = mContext.getFilesDir() + "/" + filename;
                         Logger.d(TAG, "upload log filename :" + filePath);
                         postlog(null, filePath);
@@ -81,13 +83,29 @@ public class UploadLogManager {
         };
     }
 
-    private int logCount = 0;
-    private String uploadTactics = null;
-
+    /**
+     * 开始上传日志
+     */
     public void postLogInfo() {
         Logger.d(TAG, "开始上传文件");
         logCount = 0;
         cmdHandler.sendEmptyMessageDelayed(POST_LOG_ONECE, 5 * 1000);
+    }
+
+    /**
+     * 上传回调
+     */
+    public void postlogfileAgain() {
+        if (getUploadTactics() == UPLOAD_LOG_DEFAULT) {
+            getUploadFile();
+            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
+        }
+//        if(logCount >= RDConfig.mMaxCount){
+//            logCount ++;
+//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_NEXT, 5 * 1000);
+//        }else{
+//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
+//        }
     }
 
     /**
@@ -123,7 +141,7 @@ public class UploadLogManager {
         File uploadFile = null;
         try {
             for (int i = 0; i <= RDConfig.mMaxCount; i++) {
-                String filename = String.format(LOG_FILE_NAME_N, i);
+                String filename = String.format(RDConfig.LOG_FILE_NAME_N, i);
                 file = new File(mContext.getFilesDir(), filename);
                 long time = file.lastModified();
                 if (time == 0) {
@@ -148,19 +166,6 @@ public class UploadLogManager {
         }
 
         return logCount;
-    }
-
-    public void postlogfileAgain() {
-        if (getUploadTactics() == UPLOAD_LOG_DEFAULT) {
-            getUploadFile();
-            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
-        }
-//        if(logCount >= RDConfig.mMaxCount){
-//            logCount ++;
-//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_NEXT, 5 * 1000);
-//        }else{
-//            cmdHandler.sendEmptyMessageDelayed(POST_LOG_END, 5 * 1000);
-//        }
     }
 
     private void postlog(UploadLogManager listener, String filePath) {
@@ -192,6 +197,5 @@ public class UploadLogManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

@@ -25,7 +25,7 @@ public class LogcatEndCmdImpl implements DiagnosisManagement.ICmdHandler {
 
     @Override
     public String getCmdName() {
-        return "logcat_end";
+        return CmdConstant.CMD_LOGCAT_END;
     }
 
     @Override

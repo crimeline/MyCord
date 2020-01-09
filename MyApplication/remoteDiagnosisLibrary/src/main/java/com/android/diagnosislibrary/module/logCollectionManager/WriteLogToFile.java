@@ -22,9 +22,6 @@ public class WriteLogToFile {
     private static WriteLogToFile mWriteLogToFile = null;
     private Context mContext = null;
 
-    private static final String LOG_FILE_NAME = ".run.log";
-    private static final String LOG_FILE_NAME_N = "RD_debug_%d.log";
-
     private static final int KB = 1024;
     private static final int MB = 1024 * KB;
     private static final int LOG_FILE_MAX_LENGTH = 10 * MB;
@@ -50,17 +47,81 @@ public class WriteLogToFile {
     }
 
     /**
+     * 暂停写日志
+     */
+    public void pauseWriteLog() {
+        isWriteLog = false;
+    }
+
+    /**
+     * 开始写日志
+     */
+    public void openWriteLog() {
+        isWriteLog = true;
+    }
+
+    /**
+     * 拷贝最新的日志文件
+     */
+    public void capyLogfile() {
+        try {
+            Logger.d(TAG, "switchLogfile ...");
+            pauseWriteLog();
+            File logfile = new File(mContext.getFilesDir(), RDConfig.LOG_FILE_NAME);
+            String filename = String.format(RDConfig.LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
+            File savefile = new File(mContext.getFilesDir(), filename);
+            while (isRunning) {
+                Thread.sleep(200);
+            }
+            closeLogFile();
+            ///TODO:修改成cp
+            if (!copyFile(logfile, savefile)) {
+                Log.e(TAG, "saveLogfile: renameTo error.");
+            }
+            openWriteLog();
+        } catch (Exception e) {
+            Log.d(TAG, "getFime: error " + e.toString());
+        }
+        return;
+    }
+
+    /**
+     * 写log文件
+     *
+     * @param log log 内容
+     */
+    public void writeLog(String log) {
+        if (!isWriteLog) {
+            return;
+        }
+        if (StringUtils.isNullOrEmpty(log)) {
+            return;
+        }
+        try {
+            isRunning = true;
+            if (outputStream == null) {
+                openLogfile();
+            }
+            outputStream.write(log.getBytes());
+            saveLogfile();
+            isRunning = false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 获取配置文件大小
      *
      * @return
      */
     private long getLength() {
         int size = RDConfig.getInstance().getMaxsize();
-        if(size <= 0){
+        if (size <= 0) {
             return LOG_FILE_MAX_LENGTH;
         }
-        if(size < 512*KB){
-            size = 512*KB;
+        if (size < 512 * KB) {
+            size = 512 * KB;
         }
         return size;
     }
@@ -75,7 +136,7 @@ public class WriteLogToFile {
         File saveFile = null;
         try {
             for (int i = 0; i <= RDConfig.mMaxCount; i++) {
-                String filename = String.format(LOG_FILE_NAME_N, i);
+                String filename = String.format(RDConfig.LOG_FILE_NAME_N, i);
                 file = new File(mContext.getFilesDir(), filename);
                 long time = file.lastModified();
                 if (time == 0) {
@@ -93,7 +154,7 @@ public class WriteLogToFile {
             }
         } catch (Exception e) {
             Log.e(TAG, "getSaveFileName: error " + e.toString());
-            saveFile = new File(mContext.getFilesDir(), String.format(LOG_FILE_NAME_N, 0));
+            saveFile = new File(mContext.getFilesDir(), String.format(RDConfig.LOG_FILE_NAME_N, 0));
             return saveFile;
         }
 
@@ -107,7 +168,7 @@ public class WriteLogToFile {
      */
     private void saveLogfile() {
         try {
-            File logfile = new File(mContext.getFilesDir(), LOG_FILE_NAME);
+            File logfile = new File(mContext.getFilesDir(), RDConfig.LOG_FILE_NAME);
             if (logfile.length() < getLength()) {
                 return;
             }
@@ -133,7 +194,7 @@ public class WriteLogToFile {
     private void openLogfile() {
         try {
             if (outputStream == null) {
-                File logFile = new File(mContext.getFilesDir(), LOG_FILE_NAME);
+                File logFile = new File(mContext.getFilesDir(), RDConfig.LOG_FILE_NAME);
                 outputStream = new FileOutputStream(logFile, true);
             }
         } catch (FileNotFoundException e) {
@@ -154,14 +215,6 @@ public class WriteLogToFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void pauseWriteLog() {
-        isWriteLog = false;
-    }
-
-    public void openWriteLog() {
-        isWriteLog = true;
     }
 
     /**
@@ -209,52 +262,5 @@ public class WriteLogToFile {
             }
         }
         return false;
-    }
-
-    public void switchLogfile() {
-        try {
-            Logger.d(TAG, "switchLogfile ...");
-            pauseWriteLog();
-            File logfile = new File(mContext.getFilesDir(), LOG_FILE_NAME);
-            String filename = String.format(LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
-            File savefile = new File(mContext.getFilesDir(), filename);
-            while (isRunning) {
-                Thread.sleep(200);
-            }
-            closeLogFile();
-            ///TODO:修改成cp
-            if (!copyFile(logfile,savefile)) {
-                Log.e(TAG, "saveLogfile: renameTo error.");
-            }
-            openWriteLog();
-        } catch (Exception e) {
-            Log.d(TAG, "getFime: error " + e.toString());
-        }
-        return;
-    }
-
-    /**
-     * 写log文件
-     *
-     * @param log log 内容
-     */
-    public void writeLog(String log) {
-        if (!isWriteLog) {
-            return;
-        }
-        if (StringUtils.isNullOrEmpty(log)) {
-            return;
-        }
-        try {
-            isRunning = true;
-            if (outputStream == null) {
-                openLogfile();
-            }
-            outputStream.write(log.getBytes());
-            saveLogfile();
-            isRunning = false;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

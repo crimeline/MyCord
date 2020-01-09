@@ -2,9 +2,8 @@ package com.android.diagnosislibrary.module.handlerManager;
 
 import android.content.Context;
 
-import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
-import com.android.diagnosislibrary.module.logCollectionManager.UploadLogManager;
 import com.android.diagnosislibrary.DiagnosisManagement;
+import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionManager;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 
 public class UploadLogCmdImpl implements DiagnosisManagement.ICmdHandler {
@@ -30,7 +29,7 @@ public class UploadLogCmdImpl implements DiagnosisManagement.ICmdHandler {
 
     @Override
     public String getCmdName() {
-        return "custom_";
+        return CmdConstant.CMD_CUSTOM;
     }
 
     @Override
@@ -39,9 +38,8 @@ public class UploadLogCmdImpl implements DiagnosisManagement.ICmdHandler {
         if (mContext == null) {
             Logger.e(TAG, "cmdHandler error: don't init");
         }
-        //没有跑日志收集模块不让上传日志
-        if (LogCollectionManager.getInstance(mContext).switchLogfile()) {
-            UploadLogManager.getInstance(mContext).postLogInfo();
+        if(!LogCollectionManager.getInstance(mContext).uploadLogFile()){
+            DiagnosisManagement.getInstance().sendDiagnoseResponse("set error: don't running log collection !!!", id);
         }
         return;
     }

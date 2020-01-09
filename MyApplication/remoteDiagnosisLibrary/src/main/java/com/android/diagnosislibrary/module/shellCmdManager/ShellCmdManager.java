@@ -19,10 +19,18 @@ public class ShellCmdManager {
         return mShellCmdManager;
     }
 
+    /**
+     * 执行shell命令
+     * @param id
+     * @param command
+     */
     public void runShellCmd(String id, String command) {
         mRunCommand = handleShellCmd(id, command);
     }
 
+    /**
+     * 停止执行shell命令
+     */
     public void stopRunningShellCmd() {
         if (mRunCommand != null) {
             try {
@@ -36,12 +44,26 @@ public class ShellCmdManager {
     }
 
     /**
+     * 发送回调
+     * @param id
+     * @return
+     */
+    private RunCommand.CommandCallBack getCommandCallBack(@NonNull final String id) {
+        return new RunCommand.CommandCallBack() {
+            @Override
+            public void sendResult(String line) {
+                DiagnosisManagement.getInstance().sendDiagnoseResponse(line, id);
+            }
+        };
+    }
+
+    /**
      * linux 标准命令
      */
     private RunCommand handleShellCmd(@NonNull final String id, String command) {
         stopRunningShellCmd();
         RunCommand runCommand = new RunCommand(command, RDConfig.getInstance().getTimeout());
-        runCommand.setCallBack(DiagnosisManagement.getInstance().getCommandCallBack(id));
+        runCommand.setCallBack(getCommandCallBack(id));
         runCommand.start();
         return runCommand;
     }

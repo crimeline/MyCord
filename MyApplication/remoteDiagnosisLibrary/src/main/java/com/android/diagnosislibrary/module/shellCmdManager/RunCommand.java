@@ -1,6 +1,5 @@
 package com.android.diagnosislibrary.module.shellCmdManager;
 
-import com.android.diagnosislibrary.DiagnosisManagement;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -20,7 +19,7 @@ public class RunCommand extends Thread {
     private String mCommand = null;
     private String mResult = null;
     private long mTimeOut = 30; //默认30秒超时
-    private DiagnosisManagement.CommandCallBack mCallBack = null;
+    private CommandCallBack mCallBack = null;
     private Process process;
     private boolean run = true;
 
@@ -36,6 +35,9 @@ public class RunCommand extends Thread {
 
     }
 
+    /**
+     * 退出
+     */
     public void terminal() {
         if (process != null) {
             run = false;
@@ -43,16 +45,31 @@ public class RunCommand extends Thread {
         }
     }
 
+    /**
+     * 启动
+     */
     public void run() {
         if (mCommand != null) {
             mResult = StringexecShellStr(mCommand);
         }
     }
 
-    public void setCallBack(DiagnosisManagement.CommandCallBack callBack) {
+    public interface CommandCallBack {
+        void sendResult(String line);
+    }
+
+    /**
+     * 设置结果回调
+     * @param callBack
+     */
+    public void setCallBack(CommandCallBack callBack) {
         mCallBack = callBack;
     }
 
+    /**
+     * 获取命令执行结果
+     * @return
+     */
     public String getResult() {
         return mResult;
     }

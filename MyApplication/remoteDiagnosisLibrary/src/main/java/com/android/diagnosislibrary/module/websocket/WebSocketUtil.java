@@ -75,7 +75,6 @@ public class WebSocketUtil {
     };
 
     public void startReconnect() {
-        Logger.d(TAG, " mHandler: " + mHandler + "tangtang reconnectRunnable: " + reconnectRunnable + " , " + android.os.Process.myPid());
         if (CommonUtil.isMainProcess(mContext) && mHandler != null) {
             Logger.d(TAG, "send massage to reconnectRunnable");
             mHandler.removeCallbacks(reconnectRunnable);

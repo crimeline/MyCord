@@ -30,7 +30,7 @@ public class SetLogFilterCmdImpl implements DiagnosisManagement.ICmdHandler {
 
     @Override
     public String getCmdName() {
-        return "setLogFilter";
+        return CmdConstant.CMD_SET_LOG_FILTER;
     }
 
     @Override

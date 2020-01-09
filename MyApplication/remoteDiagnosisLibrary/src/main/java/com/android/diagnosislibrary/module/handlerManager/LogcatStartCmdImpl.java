@@ -25,7 +25,7 @@ public class LogcatStartCmdImpl implements DiagnosisManagement.ICmdHandler {
 
     @Override
     public String getCmdName() {
-        return "logcat_begin";
+        return CmdConstant.CMD_LOGCAT_BEGIN;
     }
 
     @Override

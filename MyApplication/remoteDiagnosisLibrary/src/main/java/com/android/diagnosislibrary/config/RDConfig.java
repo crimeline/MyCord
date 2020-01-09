@@ -3,7 +3,6 @@ package com.android.diagnosislibrary.config;
 import com.android.diagnosislibrary.utils.StringUtils;
 
 public class RDConfig {
-    public static final int mMaxCount = 3;
     private static final String TAG = "RDConfig";
     private static RDConfig mRDConfig = null;
     private String filter;
@@ -12,6 +11,10 @@ public class RDConfig {
     private int timeout;
     private String devId;
     private String uploadLogUrl;
+
+    public static final String LOG_FILE_NAME_N = "RD_debug_%d.log";
+    public static final String LOG_FILE_NAME = ".run.log";
+    public static final int mMaxCount = 3;
 
     private RDConfig() {
     }

@@ -1,10 +1,10 @@
 package com.android.diagnosislibrary;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.android.diagnosislibrary.config.RDConfig;
+import com.android.diagnosislibrary.module.handlerManager.CmdConstant;
 import com.android.diagnosislibrary.module.handlerManager.LogcatEndCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.LogcatStartCmdImpl;
 import com.android.diagnosislibrary.module.handlerManager.SetLogFilterCmdImpl;
@@ -13,7 +13,6 @@ import com.android.diagnosislibrary.module.logCollectionManager.LogCollectionMan
 import com.android.diagnosislibrary.module.logCollectionManager.UploadLogManager;
 import com.android.diagnosislibrary.module.shellCmdManager.ShellCmdManager;
 import com.android.diagnosislibrary.module.websocket.MessageBody;
-import com.android.diagnosislibrary.module.websocket.MsgConstant;
 import com.android.diagnosislibrary.module.websocket.WebSocketBody;
 import com.android.diagnosislibrary.module.websocket.WebSocketUtil;
 import com.android.diagnosislibrary.utils.DevUtils;
@@ -73,23 +72,47 @@ public class DiagnosisManagement {
         WebSocketUtil.getInstance(mContext).startReconnect();
     }
 
+    /**
+     * 逆初始化
+     */
     public void uninit() {
         stopLog();
     }
 
+    /**
+     * 设置配置
+     * @param filter    日志过滤条件
+     * @param websocketUrl  websocket服务器地址
+     * @param uploadLogUrl  日志上传地址
+     * @param maxsize   日志大小上限
+     * @param timeout   命令执行超时时间
+     * @param devId     设备id
+     * @return
+     */
     public Boolean setRDConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId){
         RDConfig.getInstance().setConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
         return true;
     }
 
+    /**
+     * 开始收集日志
+     */
     public void startLog() {
         LogCollectionManager.getInstance(mContext).startLog();
     }
 
+    /**
+     * 停止收集日志
+     */
     public void stopLog(){
         LogCollectionManager.getInstance(mContext).stopLog();
     }
 
+    /**
+     * websocket接受者
+     * @param client
+     * @param message   消息
+     */
     public void onMessageReceived(WebSocketClient client, String message) {
         if (client == null || TextUtils.isEmpty(message)) {
             Logger.e(TAG, "onMessageReceived message: is null");
@@ -109,25 +132,19 @@ public class DiagnosisManagement {
         }
     }
 
+    /**
+     * 自定义命令接口
+     */
     public interface ICmdHandler {
         String getCmdName();
 
         void cmdHandler(String id, String command);
     }
 
-    public interface CommandCallBack {
-        void sendResult(String line);
-    }
-
-    public CommandCallBack getCommandCallBack(@NonNull final String id) {
-        return new DiagnosisManagement.CommandCallBack() {
-            @Override
-            public void sendResult(String line) {
-                sendDiagnoseResponse(line, id);
-            }
-        };
-    }
-
+    /**
+     * 添加自定义命令
+     * @param cmdhander
+     */
     public void addCmd(ICmdHandler cmdhander) {
         synchronized (this) {
             cmdHandlers.add(cmdhander);
@@ -163,7 +180,7 @@ public class DiagnosisManagement {
                     for (int i = 0; i < commands.size(); i++) {
                         String command = commands.get(i);
                         for (ICmdHandler cmdhandler : cmdHandlers) {
-                            if (command.startsWith(MsgConstant.CMD_AM)) {
+                            if (command.startsWith(CmdConstant.CMD_AM)) {
                                 //handleAndroidCmd(id, command);
                                 return;
                             } else if (command.startsWith(cmdhandler.getCmdName())) {
