@@ -2,10 +2,11 @@ package com.android.diagnosislibrary.module.shellCmdManager;
 
 import android.support.annotation.NonNull;
 
-import com.android.diagnosislibrary.config.RDConfig;
 import com.android.diagnosislibrary.DiagnosisManagement;
+import com.android.diagnosislibrary.config.RDConfig;
 
 public class ShellCmdManager {
+    private static final String TAG = "ShellCmdManager";
     private static ShellCmdManager mShellCmdManager = null;
     private RunCommand mRunCommand = null;
 

@@ -20,7 +20,7 @@ import java.io.PrintWriter;
  */
 
 public class UploadLogManager {
-    private static String TAG = "VOS_LogcatStroreManager";
+    private static String TAG = "UploadLogManager";
     private static UploadLogManager instance;
     private static Context mContext = null;
 
@@ -49,7 +49,7 @@ public class UploadLogManager {
     }
 
     public void init() {
-        Log.d(TAG, " startLogcat ....");
+        Log.d(TAG, " init ....");
         cmdThread = new HandlerThread("cmdThread");
         cmdThread.start();
 

@@ -16,6 +16,7 @@ import com.android.diagnosislibrary.module.websocket.MessageBody;
 import com.android.diagnosislibrary.module.websocket.WebSocketBody;
 import com.android.diagnosislibrary.module.websocket.WebSocketUtil;
 import com.android.diagnosislibrary.utils.DevUtils;
+import com.android.diagnosislibrary.utils.FileUtils;
 import com.android.diagnosislibrary.utils.JsonUtil;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
@@ -66,6 +67,7 @@ public class DiagnosisManagement {
             return;
         }
         mContext = ctx;
+        FileUtils.checkSuPermissions(mContext);
         baseCmdHandleInit();
         setRDConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
         UploadLogManager.getInstance(mContext).init();

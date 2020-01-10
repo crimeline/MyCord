@@ -74,7 +74,6 @@ public class WriteLogToFile {
                 Thread.sleep(200);
             }
             closeLogFile();
-            ///TODO:修改成cp
             if (!copyFile(logfile, savefile)) {
                 Log.e(TAG, "saveLogfile: renameTo error.");
             }

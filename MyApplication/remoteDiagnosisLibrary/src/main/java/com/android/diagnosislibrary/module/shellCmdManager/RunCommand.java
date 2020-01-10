@@ -1,5 +1,6 @@
 package com.android.diagnosislibrary.module.shellCmdManager;
 
+import com.android.diagnosislibrary.utils.FileUtils;
 import com.android.diagnosislibrary.utils.Logger.Logger;
 import com.android.diagnosislibrary.utils.StringUtils;
 
@@ -61,6 +62,7 @@ public class RunCommand extends Thread {
 
     /**
      * 设置结果回调
+     *
      * @param callBack
      */
     public void setCallBack(CommandCallBack callBack) {
@@ -69,6 +71,7 @@ public class RunCommand extends Thread {
 
     /**
      * 获取命令执行结果
+     *
      * @return
      */
     public String getResult() {
@@ -76,30 +79,32 @@ public class RunCommand extends Thread {
     }
 
     private String StringexecShellStr(String cmd) {
-        String[] cmdStrings = new String[]{"sh", "-c", cmd};
+//        String[] cmdStrings = new String[]{"sh", "-c", cmd};
         String retString = "";
         BufferedReader stdout = null;
         BufferedReader stderr = null;
+        String line = null;
 
         try {
             Logger.i(TAG, "cmd= " + cmd);
             long startTime = System.currentTimeMillis();
-//			process = Runtime.getRuntime().exec(cmdStrings);
 
+            if(FileUtils.isSuPermissions()){
+                Logger.i(TAG, "running cmd is Su Permissions");
+                process = Runtime.getRuntime().exec("su");
+            }else{
+                Logger.i(TAG, "running cmd no Permissions");
+                process = Runtime.getRuntime().exec("sh");
+            }
 
-            process = Runtime.getRuntime().exec("su");
             stdout = new BufferedReader(new InputStreamReader(
                     process.getInputStream()), RESULT_SIZE);
             stderr = new BufferedReader(new InputStreamReader(
                     process.getErrorStream()), RESULT_SIZE);
-
             PrintWriter PrintWriter = new PrintWriter(process.getOutputStream());
             PrintWriter.println(cmd);
             PrintWriter.flush();
             PrintWriter.close();
-
-
-            String line = null;
 
             Logger.i(TAG, "start read result ");
             while (run && (line = stdout.readLine()) != null) {
@@ -138,6 +143,10 @@ public class RunCommand extends Thread {
             Logger.i(TAG, "end read result ");
         } catch (Exception e) {
             e.printStackTrace();
+            if (mCallBack != null) {
+                mCallBack.sendResult(e.getMessage());
+            }
+            retString = retString + e.getMessage();
         } finally {
             try {
                 if (stdout != null) {
@@ -149,11 +158,15 @@ public class RunCommand extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(cmd.contains("logcat")){
-                mCallBack.sendResult(LOGCAT_END_INFO);
+            if (cmd.contains("logcat")) {
+                if (mCallBack != null) {
+                    mCallBack.sendResult(LOGCAT_END_INFO);
+                }
             }
-            if(StringUtils.isNullOrEmpty(retString)){
-                mCallBack.sendResult(LOGCAT_EMPTY_INFO);
+            if (StringUtils.isNullOrEmpty(retString)) {
+                if (mCallBack != null) {
+                    mCallBack.sendResult(LOGCAT_EMPTY_INFO);
+                }
             }
         }
 
