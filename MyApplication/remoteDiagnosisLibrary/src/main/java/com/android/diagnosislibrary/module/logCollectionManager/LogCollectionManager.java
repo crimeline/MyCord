@@ -68,7 +68,7 @@ public class LogCollectionManager {
     /**
      * 上传日志
      */
-    public boolean uploadLogFile(){
+    public boolean uploadLogFile() {
         Logger.d(TAG, "switchLogfile ...");
         //没有跑日志收集模块不让上传日志
         if (!isRunning) {
@@ -86,14 +86,19 @@ public class LogCollectionManager {
      * @param filter
      */
     public String setLogFilter(String filter) {
-        if (filter.equals(oldFilter)) {
-            return "set error: The filter is the same as the old one!!!\n" + "old filter:" + RDConfig.getInstance().getFilter();
+        try {
+            if (filter.equals(oldFilter)) {
+                return "set error: The filter is the same as the old one!!!\n" + "old filter:" + RDConfig.getInstance().getFilter();
+            }
+            if (!isRunning) {
+                return "set error: don't running log collection !!!";
+            }
+            RDConfig.getInstance().setFilter(filter);
+            stopRunningLogCmd();
+        } catch (Exception e) {
+            Logger.e(TAG, "setLogFilter error: " + e.toString());
+            return e.getMessage();
         }
-        if (!isRunning) {
-            return "set error: don't running log collection !!!";
-        }
-        RDConfig.getInstance().setFilter(filter);
-        stopRunningLogCmd();
         return "set log filter successful !!!";
     }
 
@@ -117,7 +122,7 @@ public class LogCollectionManager {
         return filter;
     }
 
-    private void reStart(){
+    private void reStart() {
         if (isRunning) {
             oldFilter = null;
             writLogToFile(RDConfig.getInstance().getFilter());
@@ -126,33 +131,38 @@ public class LogCollectionManager {
     }
 
     private boolean writLogToFile(String filter) {
-        if (mRunCommand != null ) {
-            if(filter.equals(oldFilter)){
-                return false;
-            }
-            stopRunningLogCmd();
-        }
-
-        oldFilter = filter;
-        //解决grep命令导致收集日志不及时问题
-        if (filter.contains("grep") && !filter.contains("line-buffered")) {
-            filter = filter.replace("grep", "grep --line-buffered");
-        }
-        String command = "logcat " + filter;
-        Logger.d(TAG, "writLogToFile : " + command);
-        RunCommand runCommand = new RunCommand(command, 0);
-        runCommand.setCallBack(new RunCommand.CommandCallBack() {
-            @Override
-            public void sendResult(String line) {
-                WriteLogToFile.getInstance(mContext).writeLog(line + '\n');
-                if(line.contains(RunCommand.LOGCAT_END_INFO)) {
-                    Logger.d(TAG,"old log collection end");
-                    reStart();
+        try {
+            if (mRunCommand != null) {
+                if (filter.equals(oldFilter)) {
+                    return false;
                 }
+                stopRunningLogCmd();
             }
-        });
-        runCommand.start();
-        mRunCommand = runCommand;
+
+            oldFilter = filter;
+            //解决grep命令导致收集日志不及时问题
+            if (filter.contains("grep") && !filter.contains("line-buffered")) {
+                filter = filter.replace("grep", "grep --line-buffered");
+            }
+            String command = "logcat " + filter;
+            Logger.d(TAG, "writLogToFile : " + command);
+            RunCommand runCommand = new RunCommand(command, 0);
+            runCommand.setCallBack(new RunCommand.CommandCallBack() {
+                @Override
+                public void sendResult(String line) {
+                    WriteLogToFile.getInstance(mContext).writeLog(line + '\n');
+                    if (line.contains(RunCommand.LOGCAT_END_INFO)) {
+                        Logger.d(TAG, "old log collection end");
+                        reStart();
+                    }
+                }
+            });
+            runCommand.start();
+            mRunCommand = runCommand;
+        } catch (Exception e) {
+            Logger.e(TAG, "writLogToFile error: " + e.toString());
+            return false;
+        }
         return true;
     }
 }

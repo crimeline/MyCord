@@ -58,26 +58,30 @@ public class UploadLogManager {
             public void handleMessage(Message msg) {
                 String filename = null;
                 String filePath = null;
-                switch (msg.what) {
-                    case POST_LOG_ONECE:
-                        //最新的日志
-                        filename = String.format(RDConfig.LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
-                        filePath = mContext.getFilesDir() + "/" + filename;
-                        Logger.d(TAG, "upload log filename :" + filePath);
-                        postlog(instance, filePath);
-                        break;
-                    case POST_LOG_NEXT:
-                        filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
-                        filePath = mContext.getFilesDir() + "/" + filename;
-                        Logger.d(TAG, "upload log filename :" + filePath);
-                        postlog(instance, filePath);
-                        break;
-                    case POST_LOG_END:
-                        filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
-                        filePath = mContext.getFilesDir() + "/" + filename;
-                        Logger.d(TAG, "upload log filename :" + filePath);
-                        postlog(null, filePath);
-                        break;
+                try {
+                    switch (msg.what) {
+                        case POST_LOG_ONECE:
+                            //最新的日志
+                            filename = String.format(RDConfig.LOG_FILE_NAME_N, RDConfig.mMaxCount + 1);
+                            filePath = mContext.getFilesDir() + "/" + filename;
+                            Logger.d(TAG, "upload log filename :" + filePath);
+                            postlog(instance, filePath);
+                            break;
+                        case POST_LOG_NEXT:
+                            filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
+                            filePath = mContext.getFilesDir() + "/" + filename;
+                            Logger.d(TAG, "upload log filename :" + filePath);
+                            postlog(instance, filePath);
+                            break;
+                        case POST_LOG_END:
+                            filename = String.format(RDConfig.LOG_FILE_NAME_N, logCount);
+                            filePath = mContext.getFilesDir() + "/" + filename;
+                            Logger.d(TAG, "upload log filename :" + filePath);
+                            postlog(null, filePath);
+                            break;
+                    }
+                } catch (Exception e) {
+                    Logger.e(TAG, "handleMessage error: " + e.toString());
                 }
             }
         };
@@ -160,7 +164,7 @@ public class UploadLogManager {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "getSaveFileName: error " + e.toString());
+            Logger.e(TAG, "getUploadFile: error " + e.toString());
             logCount = 0;
             return logCount;
         }
@@ -169,18 +173,22 @@ public class UploadLogManager {
     }
 
     private void postlog(UploadLogManager listener, String filePath) {
-        chmodFile(filePath);
-        File postfile = new File(filePath);
-        Logger.d(TAG, "postlog 上传log文件开始 ==== " + filePath + " : " + postfile.length());
-        if (postfile != null && postfile.exists() && postfile.isFile() && postfile.length() > 0) {
-            LogInfo info = new LogInfo();
-            info.setSerialNumber(DevUtils.getSn(mContext));
-            info.setAppkey(DevUtils.getAppkey(mContext));
-            YNMPostManager.postLogInfo(info, postfile, listener);
-        } else {
-            if (listener != null) {
-                postlogfileAgain();
+        try {
+            chmodFile(filePath);
+            File postfile = new File(filePath);
+            Logger.d(TAG, "postlog 上传log文件开始 ==== " + filePath + " : " + postfile.length());
+            if (postfile != null && postfile.exists() && postfile.isFile() && postfile.length() > 0) {
+                LogInfo info = new LogInfo();
+                info.setSerialNumber(DevUtils.getSn(mContext));
+                info.setAppkey(DevUtils.getAppkey(mContext));
+                YNMPostManager.postLogInfo(info, postfile, listener);
+            } else {
+                if (listener != null) {
+                    postlogfileAgain();
+                }
             }
+        } catch (Exception e) {
+            Logger.e(TAG, "postlog error: " + e.toString());
         }
     }
 
@@ -195,7 +203,7 @@ public class UploadLogManager {
             PrintWriter.close();
             process.waitFor();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(TAG, "chmodFile error: " + e.toString());
         }
     }
 }

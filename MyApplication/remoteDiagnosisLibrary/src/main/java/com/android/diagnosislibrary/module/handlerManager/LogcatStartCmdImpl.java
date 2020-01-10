@@ -31,7 +31,7 @@ public class LogcatStartCmdImpl implements DiagnosisManagement.ICmdHandler {
     @Override
     public void cmdHandler(String id, String command) {
         Logger.d(TAG, "cmdHandler ....");
-        command = "logcat  | grep --line-buffered -e \"VOS\" -e \"AndroidRuntime\" -e \"System.err\"";
+        command = "logcat | grep --line-buffered -e \"VOS\" -e \"AndroidRuntime\" -e \"System.err\"";
         ShellCmdManager.getInstance().runShellCmd(id, command);
     }
 }

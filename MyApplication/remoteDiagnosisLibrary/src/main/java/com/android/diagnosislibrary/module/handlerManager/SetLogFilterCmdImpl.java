@@ -38,19 +38,23 @@ public class SetLogFilterCmdImpl implements DiagnosisManagement.ICmdHandler {
         if (mContext == null) {
             return;
         }
-        String filter = null;
-        if (command.contains("|grep") || command.contains("--pid") || command.contains("-s")) {
-            filter = command.replace(getCmdName(), "");
-            if (StringUtils.isNullOrEmpty(filter)) {
+        try {
+            String filter = null;
+            if (command.contains("|grep") || command.contains("--pid") || command.contains("-s")) {
+                filter = command.replace(getCmdName(), "");
+                if (StringUtils.isNullOrEmpty(filter)) {
+                    DiagnosisManagement.getInstance().sendDiagnoseResponse("set error: parameter error!!!", id);
+                    return;
+                }
+            } else {
                 DiagnosisManagement.getInstance().sendDiagnoseResponse("set error: parameter error!!!", id);
                 return;
             }
-        } else {
-            DiagnosisManagement.getInstance().sendDiagnoseResponse("set error: parameter error!!!", id);
-            return;
+            Logger.d(TAG, "filter: " + filter);
+            String result = LogCollectionManager.getInstance(mContext).setLogFilter(filter);
+            DiagnosisManagement.getInstance().sendDiagnoseResponse(result, id);
+        } catch (Exception e) {
+            Logger.e(TAG, "cmdHandler error: " + e.toString());
         }
-        Logger.d(TAG, "filter: " + filter);
-        String result = LogCollectionManager.getInstance(mContext).setLogFilter(filter);
-        DiagnosisManagement.getInstance().sendDiagnoseResponse(result, id);
     }
 }

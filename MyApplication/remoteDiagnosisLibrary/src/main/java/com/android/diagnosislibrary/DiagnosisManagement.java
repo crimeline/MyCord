@@ -60,7 +60,7 @@ public class DiagnosisManagement {
         return sInstance;
     }
 
-    public void init(Context ctx,String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
+    public void init(Context ctx, String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
         Logger.setLogLevel(Logger.LOG_LEVEL_DEBUG);
         if (ctx == null) {
             Logger.e(TAG, "init error: Context is null.");
@@ -69,7 +69,7 @@ public class DiagnosisManagement {
         mContext = ctx;
         FileUtils.checkSuPermissions(mContext);
         baseCmdHandleInit();
-        setRDConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
+        setRDConfig(filter, websocketUrl, uploadLogUrl, maxsize, timeout, devId);
         UploadLogManager.getInstance(mContext).init();
         WebSocketUtil.getInstance(mContext).startReconnect();
     }
@@ -83,16 +83,17 @@ public class DiagnosisManagement {
 
     /**
      * 设置配置
-     * @param filter    日志过滤条件
-     * @param websocketUrl  websocket服务器地址
-     * @param uploadLogUrl  日志上传地址
-     * @param maxsize   日志大小上限
-     * @param timeout   命令执行超时时间
-     * @param devId     设备id
+     *
+     * @param filter       日志过滤条件
+     * @param websocketUrl websocket服务器地址
+     * @param uploadLogUrl 日志上传地址
+     * @param maxsize      日志大小上限
+     * @param timeout      命令执行超时时间
+     * @param devId        设备id
      * @return
      */
-    public Boolean setRDConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId){
-        RDConfig.getInstance().setConfig(filter,websocketUrl,uploadLogUrl,maxsize,timeout,devId);
+    public Boolean setRDConfig(String filter, String websocketUrl, String uploadLogUrl, int maxsize, int timeout, String devId) {
+        RDConfig.getInstance().setConfig(filter, websocketUrl, uploadLogUrl, maxsize, timeout, devId);
         return true;
     }
 
@@ -106,14 +107,15 @@ public class DiagnosisManagement {
     /**
      * 停止收集日志
      */
-    public void stopLog(){
+    public void stopLog() {
         LogCollectionManager.getInstance(mContext).stopLog();
     }
 
     /**
      * websocket接受者
+     *
      * @param client
-     * @param message   消息
+     * @param message 消息
      */
     public void onMessageReceived(WebSocketClient client, String message) {
         if (client == null || TextUtils.isEmpty(message)) {
@@ -121,16 +123,20 @@ public class DiagnosisManagement {
             return;
         }
 
-        Logger.d(TAG, "onMessageReceived message:" + message);
-        WebSocketBody webSocketBody = JsonUtil.getInstance().fromJson(message, WebSocketBody.class);
-        if (webSocketBody != null) {
-            if (mDeltatime == 0) {
+        try {
+            Logger.d(TAG, "onMessageReceived message:" + message);
+            WebSocketBody webSocketBody = JsonUtil.getInstance().fromJson(message, WebSocketBody.class);
+            if (webSocketBody != null) {
+                if (mDeltatime == 0) {
 //                syncWebTime();
-            }
-            mWebSocketClient = client;
+                }
 
-            lastId = webSocketBody.getFrom();
-            parse(lastId, webSocketBody.getMessage());
+                mWebSocketClient = client;
+                lastId = webSocketBody.getFrom();
+                parse(lastId, webSocketBody.getMessage());
+            }
+        } catch (Exception e) {
+            Logger.e(TAG, "onMessageReceived error: " + e.toString());
         }
     }
 
@@ -138,13 +144,16 @@ public class DiagnosisManagement {
      * 自定义命令接口
      */
     public interface ICmdHandler {
+        //命令名称
         String getCmdName();
 
+        //命令处理方法
         void cmdHandler(String id, String command);
     }
 
     /**
      * 添加自定义命令
+     *
      * @param cmdhander
      */
     public void addCmd(ICmdHandler cmdhander) {
@@ -181,7 +190,7 @@ public class DiagnosisManagement {
 
                     for (int i = 0; i < commands.size(); i++) {
                         String command = commands.get(i);
-                        String [] cmd = command.split(" ");
+                        String[] cmd = command.split(" ");
                         for (ICmdHandler cmdhandler : cmdHandlers) {
                             if (cmd[0].equals(CmdConstant.CMD_AM)) {
                                 //handleAndroidCmd(id, command);
