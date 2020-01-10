@@ -14,7 +14,8 @@ public class RunCommand extends Thread {
     private static final int DELAY_TIME = 50;
     private static final int MS = 1000;
 
-    public static final String LOGCAT_END_INFO = "logcat cmd end running";
+    public static final String LOGCAT_END_INFO = "logcat cmd running end";
+    public static final String LOGCAT_EMPTY_INFO = "running result: is empty";
 
     private String mCommand = null;
     private String mResult = null;
@@ -150,6 +151,9 @@ public class RunCommand extends Thread {
             }
             if(cmd.contains("logcat")){
                 mCallBack.sendResult(LOGCAT_END_INFO);
+            }
+            if(StringUtils.isNullOrEmpty(retString)){
+                mCallBack.sendResult(LOGCAT_EMPTY_INFO);
             }
         }
 

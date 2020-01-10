@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiagnosisManagement {
-    private static final String TAG = "MsgListener";
+    private static final String TAG = "DiagnosisManagement";
 
     private static long mDeltatime = 0;
     private static long mLastSyncWebTime = 0;
@@ -179,11 +179,12 @@ public class DiagnosisManagement {
 
                     for (int i = 0; i < commands.size(); i++) {
                         String command = commands.get(i);
+                        String [] cmd = command.split(" ");
                         for (ICmdHandler cmdhandler : cmdHandlers) {
-                            if (command.startsWith(CmdConstant.CMD_AM)) {
+                            if (cmd[0].equals(CmdConstant.CMD_AM)) {
                                 //handleAndroidCmd(id, command);
                                 return;
-                            } else if (command.startsWith(cmdhandler.getCmdName())) {
+                            } else if (cmd[0].equals(cmdhandler.getCmdName())) {
                                 cmdhandler.cmdHandler(id, command);
                                 return;
                             }
