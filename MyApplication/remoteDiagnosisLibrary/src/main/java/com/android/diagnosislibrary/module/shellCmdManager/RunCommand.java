@@ -107,7 +107,8 @@ public class RunCommand extends Thread {
             PrintWriter.close();
 
             Logger.i(TAG, "start read result ");
-            while (run && (line = stdout.readLine()) != null) {
+            BufferedReader bufReader = new BufferedReader(stdout);
+            while (run && (line = bufReader.readLine()) != null) {
 //				Thread.sleep(DELAY_TIME);
                 if (!line.trim().isEmpty()) {
                     if (mCallBack != null) {
@@ -124,7 +125,8 @@ public class RunCommand extends Thread {
             }
 
             if (StringUtils.isNullOrEmpty(retString)) {
-                while (run && (line = stderr.readLine()) != null) {
+                bufReader = new BufferedReader(stderr);
+                while (run && (line = bufReader.readLine()) != null) {
 //					Thread.sleep(DELAY_TIME);
                     if (false == line.trim().isEmpty()) {
                         if (mCallBack != null) {
