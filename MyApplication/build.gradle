@@ -24,3 +24,19 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+println("this is outside")
+
+task haha{
+    println("hahaha")
+    doLast{
+        println("ccccc")
+    }
+    doFirst{
+        println("aaaaa")
+    }
+    doLast{
+        println("bbbbb")
+    }
+    println("endendend")
+}
