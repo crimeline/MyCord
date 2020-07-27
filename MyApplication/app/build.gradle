@@ -28,3 +28,72 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(path: ':remoteDiagnosisLibrary')
 }
+
+////插件编写
+//class MyPlugin implements Plugin<Project>{
+//
+//    @Override
+//    void apply(Project o) {
+//        (0..<10).each { it ->
+//            def i = it
+//            o.task('task'+i){
+//                doLast {
+//                    print("this is task " + i)
+//                }
+//            }
+//        }
+//    }
+//}
+//
+////apply([plugin: MyPlugin])
+//apply plugin: MyPlugin
+
+task haha {
+    println("hahaha")
+    doLast {
+        println("ccccc")
+    }
+    doFirst {
+        println("aaaaa")
+    }
+    doLast {
+        println("bbbbbb")
+    }
+    println("endendend")
+}
+
+gradle.addBuildListener(new BuildListener() {
+    @Override
+    void buildStarted(Gradle gradle) {
+        println("tang start 开始构建")
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+        println("setting 文件解析完成")
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+        println("tang project 加载工程完成")
+        gradle.rootProject.subprojects.each { pro ->
+            pro.afterEvaluate {
+                println("$pro.name 调用之后调用")
+            }
+            pro.beforeEvaluate {
+                println("$pro.name 工程加载前调用")
+            }
+        }
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        println("tang gradle 项目解析完成")
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+        println("tang end 构建完成")
+    }
+})
+
